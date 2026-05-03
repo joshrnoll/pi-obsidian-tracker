@@ -1,0 +1,10 @@
+{
+  "name": "pi-obsidian-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pi skills for running an Obsidian-vault issue tracker workflow.",
+  "keywords": ["pi-package"],
+  "pi": {
+    "skills": ["./skills"]
+  }
+}
