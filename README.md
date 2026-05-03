@@ -30,6 +30,7 @@ Canonical board columns:
 - `Done`
 
 Rules:
+
 - PRDs are planning artifacts and stay in `prds/`
 - PRDs use a richer product-style structure: problem statement, solution, user stories, implementation decisions, testing decisions, out of scope, and further notes
 - The board column is the source of truth for workflow state
@@ -37,10 +38,10 @@ Rules:
 
 ## Install in Pi
 
-From a local checkout:
+Clone this repo and install using `pi install`:
 
 ```bash
-pi install /var/home/josh/github/pi-obsidian-tracker
+pi install /path/to/git/clone
 ```
 
 Or add the path to settings/packages manually.
