@@ -1,11 +1,11 @@
 ---
 name: merge-issues
-description: Merge all Done issues from a project's Kanban board into the project's configured merge branch. Moves merged cards to Merged, conflicted cards to Blocked. Use when the user wants to integrate completed work into the target branch.
+description: Merge all Done waves from a project's Kanban board into the project's configured merge branch. Moves merged wave cards to Merged, conflicted wave cards to Blocked. Use when the user wants to integrate completed wave branches into the target branch.
 ---
 
 # Merge Issues
 
-Merge all `Done` issues for a project into its configured merge branch.
+Merge all `Done` waves for a project into its configured merge branch.
 
 ## Before you start
 
@@ -22,23 +22,25 @@ Ask for the project name if it is not explicit.
 
 Load `issue-tracker/<project>/config.md` and extract:
 - `repo` — path to the local git repo
-- `merge-branch` — branch to merge issues into
+- `merge-branch` — branch to merge waves into
 
 If `config.md` is missing or either field is absent, stop and direct the user to run `new-project` or fix the config manually.
 
 ## Situational awareness
 
 Before merging anything, print a summary of:
-- Any cards currently in `In Progress`
-- Any cards currently in `Blocked`
+- Any wave cards currently in `In Progress`
+- Any wave cards currently in `Blocked`
 
 Do not touch these cards. This is informational only.
 
-## Collect Done issues
+## Collect Done waves
 
-Read all cards from the `## Done` column of `board.md`.
+Read all wave cards from the `## Done` column of `board.md`.
 
-Sort them numerically by issue number (e.g. `001-auth-routes` before `002-db-schema`).
+Resolve each card to its wave file in `issue-tracker/<project>/waves/`.
+
+Sort waves in `depends_on` order: waves with no `depends_on` (or whose dependency waves are already `Merged`) come first. Process waves in that order so that upstream branches are present in the merge branch before downstream waves are merged.
 
 If `Done` is empty, report that and exit cleanly.
 
@@ -57,31 +59,31 @@ In the repo at `repo`:
 
 ## Merge loop
 
-For each Done issue in numerical order:
+For each Done wave in dependency order:
 
-1. Resolve the worktree path: `<repo>/.worktrees/<issue-id>`
-2. Identify the local branch for the issue worktree (`git -C <worktree> branch --show-current`)
-3. Attempt the merge: `git merge --no-ff <issue-branch>`
+1. Resolve the worktree path: `<repo>/.worktrees/<wave-id>` where `wave-id` is the wave filename stem (e.g. `001-auth-wave`)
+2. Identify the local branch for the wave worktree (`git -C <worktree> branch --show-current`)
+3. Attempt the merge: `git merge --no-ff <wave-branch>`
 4. **On success:**
    - Delete the worktree: `git worktree remove <worktree-path>`
-   - Delete the local branch: `git branch -d <issue-branch>`
-   - Move the board card from `Done` to `Merged`
-   - Update the issue note `status` frontmatter to `merged`
+   - Delete the local branch: `git branch -d <wave-branch>`
+   - Move the wave board card from `Done` to `Merged`
+   - Update the wave note `status` frontmatter to `merged`
 5. **On conflict:**
    - Abort the merge: `git merge --abort`
    - Leave the worktree in place
-   - Move the board card from `Done` to `Blocked`
-   - Update the issue note `status` frontmatter to `blocked`
-   - Append a conflict note to the `## Notes` section of the issue file:
+   - Move the wave board card from `Done` to `Blocked`
+   - Update the wave note `status` frontmatter to `blocked`
+   - Append a conflict note to the wave file:
      ```
-     **Merge conflict** ({{date}}): Conflict merging into `{{merge-branch}}`. Worktree left at `.worktrees/{{issue-id}}` for manual resolution.
+     **Merge conflict** ({{date}}): Conflict merging into `{{merge-branch}}`. Worktree left at `.worktrees/{{wave-id}}` for manual resolution.
      ```
-   - Continue to the next issue
+   - Continue to the next wave
 
 ## Rules
 
-- Only touch `Done` cards — never `In Progress`, `Blocked`, `Ready`, or `Needs Triage`
-- Process issues strictly in numerical order
+- Only touch `Done` wave cards — never `In Progress`, `Blocked`, `Ready`, or `Needs Triage`
+- Process waves in `depends_on` order (upstream first)
 - Never force-merge or auto-resolve conflicts
 - Preserve all existing board formatting when moving cards
 - Treat `config.md` as the sole authority for repo path and merge branch
@@ -91,6 +93,6 @@ For each Done issue in numerical order:
 Summarize:
 - project name
 - merge branch used
-- issues merged successfully (with branch names)
-- issues that conflicted and were moved to `Blocked`
+- waves merged successfully (with branch names)
+- waves that conflicted and were moved to `Blocked`
 - final board state snapshot (Done, Merged, Blocked counts)
