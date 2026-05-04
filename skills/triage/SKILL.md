@@ -27,6 +27,7 @@ Ensure the target project exists before triaging.
 - `In Progress`
 - `Blocked`
 - `Done`
+- `Merged` (terminal — do not move cards out of this column)
 
 ## Source of truth
 

@@ -15,6 +15,14 @@ Read:
 - [kanban contract](../../docs/obsidian-kanban-contract.md)
 - [state model](../../docs/state-model.md)
 
+## Read project config
+
+Load `issue-tracker/<project>/config.md` and extract:
+- `repo` — path to the local git repo (use this instead of inferring from project name)
+- `merge-branch` — recorded for reference; `tdd` does not merge, but the worktree should be branched with this context in mind
+
+If `config.md` is missing or `repo` is absent, stop and direct the user to run `new-project` or fix the config manually.
+
 ## Project resolution
 
 Ask for the project name if it is not explicit.
@@ -41,7 +49,8 @@ When starting valid work:
 
 > [!NOTE]
 > All work is done on a dedicated worktree named after the task ID+name. Example:
-> Work for task `001-auth-routes.md` is done on `~/repos/{project-dir}/.worktrees/001-auth-routes`
+> Work for task `001-auth-routes.md` is done on `<repo>/.worktrees/001-auth-routes`
+> where `<repo>` is read from `config.md`, not inferred from the project name.
 
 ## Finishing work
 

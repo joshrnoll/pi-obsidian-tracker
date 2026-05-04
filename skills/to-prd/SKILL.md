@@ -18,16 +18,7 @@ Read:
 
 Ask for the project name if it is not explicit.
 
-Ensure this project exists, creating it lazily if needed:
-
-```text
-issue-tracker/<project-name>/
-  board.md
-  issues/
-  prds/
-```
-
-If creating the project lazily, scaffold `board.md` from [../../templates/board.md](../../templates/board.md).
+If the project directory does not exist under `issue-tracker/`, **stop and direct the user to run the `new-project` skill first**. Do not lazily scaffold projects — `new-project` is required to capture repo and merge-branch config.
 
 ## What to create
 

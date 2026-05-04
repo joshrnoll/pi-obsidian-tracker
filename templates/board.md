@@ -14,6 +14,8 @@ type: board
 
 ## Done
 
+## Merged
+
 %% kanban:settings
 ```
 {"kanban-plugin":"basic"}

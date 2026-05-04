@@ -21,6 +21,7 @@ Read these references before making changes:
 - [issue template](../../templates/issue.md)
 - [prd template](../../templates/prd.md)
 - [config template](../../templates/config.md)
+- [project-config template](../../templates/project-config.md)
 
 ## What to scaffold
 
