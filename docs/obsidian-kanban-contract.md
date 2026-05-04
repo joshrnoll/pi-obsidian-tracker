@@ -13,6 +13,7 @@ issue-tracker/<project-name>/board.md
 - `In Progress`
 - `Blocked`
 - `Done`
+- `Merged`
 
 ## Card format
 
