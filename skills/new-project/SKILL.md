@@ -43,6 +43,7 @@ issue-tracker/<project-name>/
   board.md         ← from templates/board.md
   config.md        ← from templates/project-config.md
   issues/
+  waves/
   prds/
 ```
 
