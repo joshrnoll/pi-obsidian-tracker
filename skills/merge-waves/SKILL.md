@@ -1,15 +1,16 @@
 ---
-name: merge-issues
+name: merge-waves
 description: Merge all Done waves from a project's Kanban board into the project's configured merge branch. Moves merged wave cards to Merged, conflicted wave cards to Blocked. Use when the user wants to integrate completed wave branches into the target branch.
 ---
 
-# Merge Issues
+# Merge Waves
 
 Merge all `Done` waves for a project into its configured merge branch.
 
 ## Before you start
 
 Read:
+
 - [workflow](../../docs/workflow.md)
 - [kanban contract](../../docs/obsidian-kanban-contract.md)
 - [state model](../../docs/state-model.md)
@@ -21,6 +22,7 @@ Ask for the project name if it is not explicit.
 ## Read project config
 
 Load `issue-tracker/<project>/config.md` and extract:
+
 - `repo` — path to the local git repo
 - `merge-branch` — branch to merge waves into
 
@@ -29,6 +31,7 @@ If `config.md` is missing or either field is absent, stop and direct the user to
 ## Situational awareness
 
 Before merging anything, print a summary of:
+
 - Any wave cards currently in `In Progress`
 - Any wave cards currently in `Blocked`
 
@@ -91,6 +94,7 @@ For each Done wave in dependency order:
 ## Output
 
 Summarize:
+
 - project name
 - merge branch used
 - waves merged successfully (with branch names)
