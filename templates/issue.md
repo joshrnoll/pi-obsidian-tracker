@@ -3,7 +3,7 @@ type: issue
 project: {{project-name}}
 title: {{title}}
 status: {{status}}
-source: {{source}}
+prd: "[[prds/{{prd-file}}]]"
 created: {{created}}
 depends_on: []
 tags:
@@ -29,7 +29,7 @@ tags:
 - 
 
 ## Links
-- PRD: {{source-link}}
+- PRD: [[prds/{{prd-file}}]]
 - Board: [[../board]]
 
 ## Notes

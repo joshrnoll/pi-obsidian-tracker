@@ -2,7 +2,8 @@
 type: prd
 project: {{project-name}}
 title: {{title}}
-status: draft
+status: needs-triage
+merge-branch: {{merge-branch}}
 created: {{created}}
 tags:
   - prd

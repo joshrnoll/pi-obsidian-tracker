@@ -3,8 +3,9 @@ type: wave
 project: {{project-name}}
 title: {{title}}
 status: {{status}}
+prd: "[[prds/{{prd-file}}]]"
 depends_on:
-  - "[[waves/000-prerequisite-wave]]"
+  - "[[waves/{{prerequisite-wave}}]]"
 created: {{created}}
 tags:
   - issue-tracker
@@ -15,4 +16,4 @@ tags:
 
 ## Issues
 
-- [[issues/001-first-issue]]
+- [[issues/{{issue-file}}]]

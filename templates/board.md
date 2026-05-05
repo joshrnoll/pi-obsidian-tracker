@@ -1,6 +1,7 @@
 ---
 kanban-plugin: basic
 project: {{project-name}}
+repo: {{repo-path}}
 type: board
 ---
 
