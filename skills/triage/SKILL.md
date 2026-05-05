@@ -70,8 +70,8 @@ For each PRD:
 | `Ready` | All associated waves are `Ready` |
 | `In Progress` | At least one associated wave is `In Progress` |
 | `Blocked` | At least one associated wave is `Blocked` (and none are `In Progress`) |
-| `Done` | All associated waves are `Done` |
-| `Merged` | All associated waves are `Merged` |
+| `Done` | All associated waves are `Done` or `Merged` (work is complete but `merge-branch` not yet merged into main) |
+| `Merged` | Set only by `merge-prd` after the PRD's `merge-branch` is merged into main — triage never moves a PRD card to `Merged` |
 
 3. If the computed state differs from the current board column, propose moving the PRD card
 

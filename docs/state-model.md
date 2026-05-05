@@ -27,10 +27,10 @@ PRD state is derived from the aggregate state of its associated waves. `triage` 
 | `Ready` | All associated waves are in `Ready` state |
 | `In Progress` | At least one associated wave is `In Progress` |
 | `Blocked` | At least one associated wave is `Blocked` |
-| `Done` | All associated waves are `Done` |
-| `Merged` | All associated waves are `Merged` into the PRD's `merge-branch` |
+| `Done` | All associated waves are `Done` or `Merged` (work complete; `merge-branch` not yet merged into main) |
+| `Merged` | The PRD's `merge-branch` has been merged into `main`/`master` by `merge-prd`. Set only by `merge-prd` — never by `triage`. |
 
-PRD state is **manually managed** via the `triage` skill. Skills that transition wave state do not automatically move PRD cards — `triage` must be re-run after wave state changes to bring PRD cards into sync.
+PRD state is **manually managed** via the `triage` skill for all states up to `Done`. The `Merged` state is set exclusively by `merge-prd` after the feature branch lands in main. Skills that transition wave state do not automatically move PRD cards — `triage` must be re-run after wave state changes to bring PRD cards into sync.
 
 ## Wave state rules
 
@@ -59,7 +59,7 @@ PRD → wave association is discovered by scanning all wave files for a matching
 - `triage` moves both wave cards and PRD cards: wave phase first, then PRD phase
 - `tdd` executes only `Ready` waves; works through issues in intra-wave `depends_on` order on a shared wave worktree
 - `merge-waves` merges `Done` wave branches into the wave's PRD `merge-branch`; moves wave cards to `Merged`
-- `merge-prd` merges a PRD's `merge-branch` into `main`/`master`; hard-gates on PRD card being `Merged` and all associated waves being `Merged`
+- `merge-prd` merges a PRD's `merge-branch` into `main`/`master`; hard-gates on PRD card being `Done` and all associated waves being `Merged`; moves the PRD card to `Merged` on success
 
 ## TDD gate
 
