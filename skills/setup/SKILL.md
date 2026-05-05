@@ -21,7 +21,6 @@ Read these references before making changes:
 - [issue template](../../templates/issue.md)
 - [prd template](../../templates/prd.md)
 - [config template](../../templates/config.md)
-- [project-config template](../../templates/project-config.md)
 
 ## What to scaffold
 
@@ -38,6 +37,7 @@ Write these files if missing:
 
 - `issue-tracker/_templates/board.md`
 - `issue-tracker/_templates/issue.md`
+- `issue-tracker/_templates/wave.md`
 - `issue-tracker/_templates/prd.md`
 - `issue-tracker/_config/pi-obsidian-tracker.md`
 

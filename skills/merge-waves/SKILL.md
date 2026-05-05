@@ -21,12 +21,11 @@ Ask for the project name if it is not explicit.
 
 ## Read project config
 
-Load `issue-tracker/<project>/config.md` and extract:
+Load `issue-tracker/<project>/board.md` and extract `repo` from frontmatter.
 
-- `repo` — path to the local git repo
-- `merge-branch` — branch to merge waves into
+If `repo` is absent from board frontmatter, stop and direct the user to run `new-project` or fix the board manually.
 
-If `config.md` is missing or either field is absent, stop and direct the user to run `new-project` or fix the config manually.
+Each wave carries its own `merge-branch` via its `prd` frontmatter field. Resolve the merge branch per wave at merge time (see Merge loop below).
 
 ## Situational awareness
 
@@ -43,16 +42,20 @@ Read all wave cards from the `## Done` column of `board.md`.
 
 Resolve each card to its wave file in `issue-tracker/<project>/waves/`.
 
+For each wave, load its `prd` frontmatter field and resolve the linked PRD file. Extract `merge-branch` from the PRD frontmatter. If a wave is missing a `prd` field, or the linked PRD is missing `merge-branch`, stop and report the malformed file — do not process any waves.
+
 Sort waves in `depends_on` order: waves with no `depends_on` (or whose dependency waves are already `Merged`) come first. Process waves in that order so that upstream branches are present in the merge branch before downstream waves are merged.
 
 If `Done` is empty, report that and exit cleanly.
 
 ## Prepare the merge branch
 
-In the repo at `repo`:
+Waves in a single run may belong to different PRDs with different merge branches. Group waves by their `merge-branch` and process each group independently.
+
+For each unique merge branch, in the repo at `repo`:
 
 1. Fetch from remote if a remote exists (`git fetch` — ignore silently if no remote)
-2. Check whether `merge-branch` exists locally or on remote
+2. Check whether the merge branch exists locally or on remote
 3. If it does not exist:
    - Check for `main` branch — use it as the base if present
    - Otherwise check for `master` — use it as the base if present
@@ -64,7 +67,7 @@ In the repo at `repo`:
 
 For each Done wave in dependency order:
 
-1. Resolve the worktree path: `<repo>/.worktrees/<wave-id>` where `wave-id` is the wave filename stem (e.g. `001-auth-wave`)
+1. Resolve the worktree path: `<repo>/.worktrees/<wave-id>` where `wave-id` is the wave filename stem (e.g. `WAVE_00001_PRD_00001_auth-foundation`)
 2. Identify the local branch for the wave worktree (`git -C <worktree> branch --show-current`)
 3. Attempt the merge: `git merge --no-ff <wave-branch>`
 4. **On success:**
@@ -89,14 +92,16 @@ For each Done wave in dependency order:
 - Process waves in `depends_on` order (upstream first)
 - Never force-merge or auto-resolve conflicts
 - Preserve all existing board formatting when moving cards
-- Treat `config.md` as the sole authority for repo path and merge branch
+- Treat board frontmatter as the sole authority for repo path
+- Treat each wave's linked PRD frontmatter as the sole authority for merge branch
+- Hard error if any wave is missing its `prd` field or the linked PRD is missing `merge-branch`
 
 ## Output
 
 Summarize:
 
 - project name
-- merge branch used
+- merge branches used (grouped by PRD)
 - waves merged successfully (with branch names)
 - waves that conflicted and were moved to `Blocked`
 - final board state snapshot (Done, Merged, Blocked counts)

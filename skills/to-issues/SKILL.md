@@ -20,7 +20,7 @@ Read:
 
 Ask for the project name if it is not explicit.
 
-If the project directory does not exist under `issue-tracker/`, **stop and direct the user to run the `new-project` skill first**. Do not lazily scaffold projects — `new-project` is required to capture repo and merge-branch config.
+If the project directory does not exist under `issue-tracker/`, **stop and direct the user to run the `new-project` skill first**. Do not lazily scaffold projects — `new-project` is required to capture repo config.
 
 ## Inputs
 
@@ -52,31 +52,42 @@ After decomposing issues, group them into waves:
 
 ## What to write
 
+### Numbering
+
+Scan existing files in the project's `issues/` and `waves/` directories to determine the next available number for each sequence. Numbers are 5-digit zero-padded and flat per-project.
+
+- PRD number: read from the source PRD filename (e.g. `PRD_00001_...` → `00001`)
+- Wave filenames: `WAVE_<nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>.md`
+- Issue filenames: `ISSUE_<nnnnn>_WAVE_<wave-nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>.md`
+
 ### Issue notes
 - Write issue notes to `issue-tracker/<project-name>/issues/`
-- Use stable numbered filenames: `001-issue-name.md`
-- Populate `depends_on` in frontmatter with intra-wave issue wikilinks only (e.g. `[[issues/001-prior-issue]]`)
-- Link issues back to the PRD under `## Links` when applicable
+- Use the naming convention: `ISSUE_<nnnnn>_WAVE_<wave-nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>.md`
+- Set `prd` frontmatter field to the parent PRD wikilink: `"[[prds/PRD_<prd-nnnnn>_<title>]]"`
+- Populate `depends_on` in frontmatter with intra-wave issue wikilinks only
+- Link issues back to the PRD under `## Links`
 
 ### Wave files
 - Write wave files to `issue-tracker/<project-name>/waves/`
-- Use stable numbered filenames: `001-wave-name.md`
-- Populate wave `depends_on` with wikilinks to prerequisite waves (e.g. `[[waves/001-prior-wave]]`)
+- Use the naming convention: `WAVE_<nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>.md`
+- Set `prd` frontmatter field to the parent PRD wikilink: `"[[prds/PRD_<prd-nnnnn>_<title>]]"`
+- Populate wave `depends_on` with wikilinks to prerequisite waves
 - List all issues in the wave under `## Issues` as wikilinks
 
 ### Board
 - Insert one wave card per wave under `## Needs Triage` in `board.md`:
   ```markdown
-  - [[waves/<wave-file>]]
+  - [[waves/WAVE_<nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>]]
   ```
 - Do **not** put issue cards on the board
+- Do **not** add another PRD card — `to-prd` already inserted it
 
 ## Rules
 
 - Insert new work into `Needs Triage`, never directly into `Ready`
 - Preserve existing board formatting
-- Do not add PRDs to the board
-- Issue cards must not appear on the board — only wave cards
+- Do not add another PRD card to the board — `to-prd` already inserted it
+- Issue cards must not appear on the board — only wave cards and PRD cards
 
 ## Output
 

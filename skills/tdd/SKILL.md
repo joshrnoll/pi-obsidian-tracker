@@ -17,11 +17,13 @@ Read:
 
 ## Read project config
 
-Load `issue-tracker/<project>/config.md` and extract:
-- `repo` — path to the local git repo (use this instead of inferring from project name)
-- `merge-branch` — recorded for reference; `tdd` does not merge, but the worktree should be branched with this context in mind
+Load `issue-tracker/<project>/board.md` and extract `repo` from frontmatter.
 
-If `config.md` is missing or `repo` is absent, stop and direct the user to run `new-project` or fix the config manually.
+Load the wave file and extract the `prd` frontmatter field. Load the linked PRD file and extract `merge-branch` — recorded for reference; `tdd` does not merge, but the worktree branch should be created from the PRD's `merge-branch`.
+
+If `repo` is absent from board frontmatter, stop and direct the user to run `new-project` or fix the board manually.
+
+If the wave is missing a `prd` field, or the linked PRD is missing `merge-branch`, stop and report the malformed file — do not proceed.
 
 ## Project resolution
 
@@ -49,8 +51,8 @@ When starting valid work:
 
 > [!NOTE]
 > All work in a wave is done on a **shared wave worktree** named after the wave ID. Example:
-> Work for wave `001-auth-wave.md` is done on `<repo>/.worktrees/001-auth-wave`
-> where `<repo>` is read from `config.md`, not inferred from the project name.
+> Work for wave `WAVE_00001_PRD_00001_auth-foundation.md` is done on `<repo>/.worktrees/WAVE_00001_PRD_00001_auth-foundation`
+> where `<repo>` is read from board frontmatter, not inferred from the project name.
 > Do not create separate worktrees per issue within the wave.
 
 6. Work through issues in dependency order using red-green-refactor for each issue

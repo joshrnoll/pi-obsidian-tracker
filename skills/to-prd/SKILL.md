@@ -5,37 +5,56 @@ description: Turn the current conversation context into a PRD note in an Obsidia
 
 # To PRD Obsidian
 
-Create a PRD note for a specific project.
+Create a PRD note for a specific project and add it to the board.
 
 ## Before you start
 
 Read:
 - [workflow](../../docs/workflow.md)
 - [state model](../../docs/state-model.md)
+- [kanban contract](../../docs/obsidian-kanban-contract.md)
 - [prd template](../../templates/prd.md)
 
 ## Project resolution
 
 Ask for the project name if it is not explicit.
 
-If the project directory does not exist under `issue-tracker/`, **stop and direct the user to run the `new-project` skill first**. Do not lazily scaffold projects — `new-project` is required to capture repo and merge-branch config.
+If the project directory does not exist under `issue-tracker/`, **stop and direct the user to run the `new-project` skill first**. Do not lazily scaffold projects — `new-project` is required to capture repo config.
+
+## Collect PRD details
+
+Ask for the following if not already provided:
+
+1. **Merge branch** — the feature branch waves associated with this PRD will be merged into, e.g. `feat-auth` or `main`. This is stored in the PRD frontmatter and is used by `merge-waves` and `merge-prd`.
+
+## PRD numbering
+
+Scan existing files in `issue-tracker/<project>/prds/` to determine the next PRD number. Numbers are 5-digit zero-padded and flat per-project (e.g. `PRD_00001`, `PRD_00002`).
 
 ## What to create
 
-Write a PRD note into:
+Write a PRD note to:
 
 ```text
-issue-tracker/<project-name>/prds/
+issue-tracker/<project-name>/prds/PRD_<nnnnn>_<descriptive-title>.md
 ```
 
 The PRD should:
-- capture the current conversation context
 - follow the structure in [../../templates/prd.md](../../templates/prd.md)
+- capture the current conversation context
 - include a clear problem statement and solution
 - include a long, numbered list of user stories
 - record implementation and testing decisions
-- stay a planning artifact
-- not be added to the board by default
+- set `merge-branch` in frontmatter to the branch provided
+- set `status` to `needs-triage` in frontmatter
+
+## Add to board
+
+Insert the PRD card into `## Needs Triage` in `board.md`:
+
+```markdown
+- [[prds/PRD_<nnnnn>_<descriptive-title>]]
+```
 
 ## Rules
 
@@ -43,12 +62,11 @@ The PRD should:
 - Prefer a stable, human-readable title and filename
 - Link to related issue notes only if they already exist
 - Do not include file paths or code snippets in the PRD
-- Keep PRDs off the execution board
 
 ## Output
 
 Summarize:
 - project name
 - PRD file path
-- title used
-- whether project scaffolding was created lazily
+- merge branch recorded
+- board card inserted
