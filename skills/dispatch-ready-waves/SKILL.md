@@ -61,7 +61,7 @@ It exits non-zero on malformed input or missing files.
 - Launch interactive sessions only; do not use `--print`
 - Use one session per wave
 - Name each session after the wave stem, prefixed with `wave-`
-  - Example: `wave-001-auth-wave`
+  - Example: `wave-WAVE_00001_PRD_00001_auth-foundation`
 - If a target session already exists, stop and ask whether to reuse or replace it
 
 ## Session prompt template
@@ -86,7 +86,7 @@ For each wave, instruct the subagent to do all of the following:
    - resolve its wave file path
    - read the wave file and inspect `depends_on`
    - build the prompt
-   - start a tmux session in the repo path from `config.md`
+   - start a tmux session in the repo path from board frontmatter
 4. Report created session names
 
 ## Output

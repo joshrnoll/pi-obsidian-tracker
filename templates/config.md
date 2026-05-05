@@ -4,8 +4,8 @@
 - Tracker root: issue-tracker/
 - Project layout:
   - `issue-tracker/<project>/board.md`
-  - `issue-tracker/<project>/config.md`
   - `issue-tracker/<project>/issues/`
+  - `issue-tracker/<project>/waves/`
   - `issue-tracker/<project>/prds/`
 - Canonical columns:
   - Needs Triage
@@ -14,8 +14,8 @@
   - Blocked
   - Done
   - Merged
-- Board state is canonical
-- PRDs do not go on the board by default
+- Board state is canonical for both wave and PRD state
 - `tdd` may only start from `Ready`
-- Per-project repo path and merge branch are defined in `issue-tracker/<project>/config.md`
-- Skills must never assume `main` as the merge branch — always read from per-project `config.md`
+- Per-project repo path is defined in `board.md` frontmatter (`repo` field)
+- Per-PRD merge branch is defined in the PRD file frontmatter (`merge-branch` field)
+- Skills must never assume `main` as the merge branch — always read from the PRD file

@@ -48,7 +48,7 @@ After decomposing issues, group them into waves:
 - Issues that depend on issues from another wave do not carry a direct cross-wave `depends_on` — instead the **wave** carrying the dependent issue lists the other wave in its own `depends_on`.
 - Issues within a wave that have ordering constraints carry `depends_on` pointing to other issues **within the same wave only**.
 - Issues with no ordering constraints within their wave have an empty `depends_on`.
-- Waves are named descriptively and numbered with a stable prefix: `001-wave-name`.
+- Waves are named descriptively with a stable numeric prefix following the naming convention (e.g. `WAVE_00001_PRD_00001_descriptive-slug`).
 
 ## What to write
 
