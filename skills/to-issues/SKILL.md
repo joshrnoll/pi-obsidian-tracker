@@ -64,6 +64,8 @@ Scan existing files in the project's `issues/` and `waves/` directories to deter
 - Write issue notes to `issue-tracker/<project-name>/issues/`
 - Use the naming convention: `ISSUE_<nnnnn>_WAVE_<wave-nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>.md`
 - Set `prd` frontmatter field to the parent PRD wikilink: `"[[prds/PRD_<prd-nnnnn>_<title>]]"`
+- Set `wave` frontmatter field to the containing wave wikilink: `"[[waves/WAVE_<wave-nnnnn>_PRD_<prd-nnnnn>_<slug>]]"`
+- Set `board` frontmatter field to `"[[board]]"`
 - Populate `depends_on` in frontmatter with intra-wave issue wikilinks only
 - Link issues back to the PRD under `## Links`
 

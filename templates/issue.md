@@ -4,6 +4,8 @@ project: {{project-name}}
 title: {{title}}
 status: {{status}}
 prd: "[[prds/{{prd-file}}]]"
+wave: "[[waves/{{wave-file}}]]"
+board: "[[board]]"
 created: {{created}}
 depends_on: []
 tags:
