@@ -1,5 +1,7 @@
 # shipboard
 
+![shipboard](shipboard.png)
+
 Pi skills for running a lightweight Obsidian-vault issue tracker workflow.
 
 ## Included skills
