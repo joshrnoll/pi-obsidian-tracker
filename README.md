@@ -1,4 +1,4 @@
-# pi-obsidian-tracker
+# shipboard
 
 Pi skills for running a lightweight Obsidian-vault issue tracker workflow.
 

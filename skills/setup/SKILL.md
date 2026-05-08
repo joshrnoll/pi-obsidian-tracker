@@ -39,7 +39,7 @@ Write these files if missing:
 - `issue-tracker/_templates/issue.md`
 - `issue-tracker/_templates/wave.md`
 - `issue-tracker/_templates/prd.md`
-- `issue-tracker/_config/pi-obsidian-tracker.md`
+- `issue-tracker/_config/shipboard.md`
 
 Populate them from this skill package's `templates/` directory.
 

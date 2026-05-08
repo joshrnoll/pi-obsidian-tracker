@@ -20,7 +20,7 @@ Read:
 Locate the tracker root by reading the global config at:
 
 ```text
-issue-tracker/_config/pi-obsidian-tracker.md
+issue-tracker/_config/shipboard.md
 ```
 
 If `issue-tracker/` does not exist under the vault path, **stop and instruct the user to run the `setup` skill first** before creating any projects.
