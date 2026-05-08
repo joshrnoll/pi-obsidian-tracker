@@ -24,6 +24,8 @@ Resolve and read `board.md`. Extract from its frontmatter:
 - `project` — project name
 - `repo` — repo path
 
+If the user has not specified a model for the subagent, ask which model to use before dispatching. Pass it to `pi` via `--model <model>`.
+
 ## What this skill does
 
 1. Read `board.md`
