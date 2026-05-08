@@ -13,9 +13,11 @@ type: board
 
 ## Blocked
 
-## Done
+## PR Drafted
 
-## Merged
+## Pending Review
+
+## Done
 
 %% kanban:settings
 ```

@@ -1,15 +1,24 @@
 # State Model
 
-## Canonical workflow states
-
-Both waves and PRDs share the same state vocabulary and the same board columns. Issues share the state vocabulary but are not tracked on the board.
+## Wave states
 
 - `Needs Triage`
 - `Ready`
 - `In Progress`
 - `Blocked`
-- `Done`
-- `Merged`
+- `PR Drafted`
+- `Pending Review`
+- `Done` (terminal — wave PR has been merged to `main`)
+
+## PRD states
+
+- `Needs Triage`
+- `Ready`
+- `In Progress`
+- `Blocked`
+- `Done` (terminal — PRD requirements are satisfied)
+
+PRDs do not enter `PR Drafted` or `Pending Review`.
 
 ## Source of truth
 
@@ -17,30 +26,50 @@ The board column is canonical for **wave** and **PRD** state.
 
 Issue note frontmatter (`status`, `depends_on`) should be updated best-effort, but all skills treat the board location of the wave card as authoritative for execution gating.
 
+## Wave state semantics
+
+- `In Progress`: implementation is actively happening on the wave branch
+- `PR Drafted`: implementation is complete, committed locally, and a draft PR has been created
+- `Pending Review`: the PR has been marked ready for review (by the human)
+- `Done`: the PR has been merged to `main`
+
+## PRD state semantics
+
+- `Done` means the PRD's requirements have been semantically satisfied by waves in `Done`
+- PRD `Done` is not tied to a merge event — PRDs are requirements-tracking artifacts, not merge artifacts
+
 ## PRD state rules
 
-PRD state is derived from the aggregate state of its associated waves. `triage` enforces these rules when evaluating PRD cards.
+PRD state is derived from associated wave states and semantic evaluation. `triage` enforces these rules.
 
 | PRD State | Condition |
 |---|---|
-| `Needs Triage` | At least one associated wave or issue needs triage; or PRD has no waves yet |
-| `Ready` | All associated waves are in `Ready` state |
-| `In Progress` | At least one associated wave is `In Progress` |
-| `Blocked` | At least one associated wave is `Blocked` |
-| `Done` | All associated waves are `Done` or `Merged` (work complete; `merge-branch` not yet merged into main) |
-| `Merged` | The PRD's `merge-branch` has been merged into `main`/`master` by `merge-prd`. Set only by `merge-prd` — never by `triage`. |
+| `Needs Triage` | PRD has no waves yet, or requirements are not fully captured by waves |
+| `Ready` | All requirements are captured by waves, and all associated waves are `Ready` or later |
+| `In Progress` | At least one associated wave is `In Progress`, `PR Drafted`, or `Pending Review` |
+| `Blocked` | At least one associated wave is `Blocked` (and none are in active states) |
+| `Done` | All current PRD requirements are semantically satisfied by waves in `Done`, with no stale open waves |
 
-PRD state is **manually managed** via the `triage` skill for all states up to `Done`. The `Merged` state is set exclusively by `merge-prd` after the feature branch lands in main. Skills that transition wave state do not automatically move PRD cards — `triage` must be re-run after wave state changes to bring PRD cards into sync.
+PRD state is managed by `triage`. PRD `Done` requires semantic evaluation — it is not a naive aggregate of wave states. The human is the final decision-maker.
 
-## Wave state rules
+## Wave transition rules
 
-Wave state is determined by the aggregate state of its constituent issues and execution progress.
+| Transition | Trigger |
+|---|---|
+| `Needs Triage` → `Ready` | `triage` validates all issues are actionable and wave metadata is complete |
+| `Ready` → `In Progress` | `tdd` starts implementation |
+| `In Progress` → `PR Drafted` | `tdd` completes implementation, pushes branch, creates draft PR |
+| `In Progress` → `Blocked` | `tdd` encounters a blocking issue |
+| `PR Drafted` → `Pending Review` | `triage` detects PR is no longer a draft on GitHub |
+| `PR Drafted` → `Blocked` | `triage` detects PR closed without merge, merge conflicts, or missing `pr_url`; or `tdd` encounters terminal CI failure |
+| `Pending Review` → `Done` | `triage` detects PR has been merged on GitHub |
+| `Pending Review` → `Blocked` | `triage` detects PR closed without merge or merge conflicts |
 
 ## Dependency model
 
 | Level | Field | Meaning |
 |---|---|---|
-| Wave → Wave | `depends_on` in wave frontmatter | Inter-wave ordering. Wave B may not start until all waves in its `depends_on` are `Merged`. |
+| Wave → Wave | `depends_on` in wave frontmatter | Inter-wave ordering. Wave B may not start until all waves in its `depends_on` are `Done`. |
 | Issue → Issue | `depends_on` in issue frontmatter | Intra-wave ordering only. An issue may not start until its listed dependencies within the same wave are `Done`. Cross-wave issue dependencies are expressed at the wave level. |
 
 ## Association model
@@ -48,6 +77,8 @@ Wave state is determined by the aggregate state of its constituent issues and ex
 | Artifact | Field | Points to |
 |---|---|---|
 | Wave | `prd` | Parent PRD wikilink |
+| Wave | `branch_name` | Semantic branch name for this wave |
+| Wave | `pr_url` | GitHub PR URL (written by `tdd` after draft PR creation) |
 | Issue | `prd` | Parent PRD wikilink |
 
 PRD → wave association is discovered by scanning all wave files for a matching `prd` field. PRD files do not maintain a reverse list of waves.
@@ -62,11 +93,10 @@ PRD → wave association is discovered by scanning all wave files for a matching
 ## Responsibility split
 
 - `to-prd` creates PRD notes and inserts PRD cards into `Needs Triage`
-- `to-issues` creates issue notes and wave files; inserts wave cards into `Needs Triage`
-- `triage` moves both wave cards and PRD cards: wave phase first, then PRD phase
-- `tdd` executes only `Ready` waves; works through issues in intra-wave `depends_on` order on a shared wave worktree
-- `merge-waves` merges `Done` wave branches into the wave's PRD `merge-branch`; moves wave cards to `Merged`
-- `merge-prd` merges a PRD's `merge-branch` into `main`/`master`; hard-gates on PRD card being `Done` and all associated waves being `Merged`; moves the PRD card to `Merged` on success
+- `to-issues` creates issue notes and wave files with `branch_name`; inserts wave cards into `Needs Triage`
+- `triage` moves wave and PRD cards through the board; reconciles wave state with GitHub PR state; evaluates semantic PRD completion
+- `tdd` executes `Ready` waves; works through issues in intra-wave `depends_on` order on a shared wave worktree; drafts PR and babysits CI
+- `dispatch-ready-waves` launches parallel interactive subagents for `Ready` waves; fire and forget
 
 ## TDD gate
 
@@ -76,11 +106,12 @@ PRD → wave association is discovered by scanning all wave files for a matching
 
 If any issue within a wave is blocked during `tdd`, the entire wave moves to `Blocked`. Work resumes only after the blocking issue is resolved and the wave is moved back to `In Progress`.
 
-## Merged is terminal
+## Done is terminal
 
-`Merged` is the final resting place for wave and PRD cards. No further state transitions occur after `Merged`.
+`Done` is the final resting place for wave and PRD cards. No further state transitions occur after `Done`.
 
 ## Hard errors
 
-- A wave without a `prd` frontmatter field is malformed. `tdd`, `merge-waves`, and `triage` must stop and report it.
-- A PRD without a `merge-branch` frontmatter field is malformed. `merge-waves` and `merge-prd` must stop and report it.
+- A wave without a `prd` frontmatter field is malformed. `tdd` and `triage` must stop and report it.
+- A wave without a `branch_name` frontmatter field is malformed. `tdd` and `triage` must stop and report it.
+- A wave in `PR Drafted` or `Pending Review` without a `pr_url` is malformed. `triage` must move it to `Blocked` and report it.

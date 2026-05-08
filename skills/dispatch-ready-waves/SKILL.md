@@ -1,11 +1,11 @@
 ---
 name: dispatch-ready-waves
-description: Launch one interactive pi subagent in its own tmux session for each Ready wave on an Obsidian project board. Use when you want parallel wave execution, dependency-aware waiting, and automatic handoff to tdd and merge-waves.
+description: Launch one interactive pi subagent in its own tmux session for each Ready wave on an Obsidian project board. Use when you want parallel wave execution with dependency-aware waiting and automatic PR drafting.
 ---
 
 # Dispatch Ready Waves
 
-Launch one interactive `pi` instance per `Ready` wave in separate tmux sessions.
+Launch one interactive `pi` instance per `Ready` wave in separate tmux sessions. Fire and forget.
 
 ## Before you start
 
@@ -14,7 +14,6 @@ Read:
 - [kanban contract](../../docs/obsidian-kanban-contract.md)
 - [state model](../../docs/state-model.md)
 - [tdd skill](../tdd/SKILL.md)
-- [merge-waves skill](../merge-waves/SKILL.md)
 - `scripts/watch-wave-deps.py`
 
 ## Inputs
@@ -25,8 +24,6 @@ Resolve and read `board.md`. Extract from its frontmatter:
 - `project` — project name
 - `repo` — repo path
 
-Do not read `config.md` — it no longer exists. Merge branch is resolved per-wave at execution time via each wave's `prd` frontmatter field.
-
 ## What this skill does
 
 1. Read `board.md`
@@ -35,7 +32,6 @@ Do not read `config.md` — it no longer exists. Merge branch is resolved per-wa
 4. In each session:
    - if the wave has dependencies, run the deterministic dependency watcher before any implementation work
    - use the `tdd` skill with the explicit wave file path
-   - after the wave is completed, use the `merge-waves` skill to merge into the wave's PRD merge branch
 
 ## Dependency watcher contract
 
@@ -43,8 +39,8 @@ Use `scripts/watch-wave-deps.py` exactly for dependency waiting.
 
 Rules:
 - The board column is canonical
-- A dependency is satisfied only when its wave card is under `## Merged`
-- Do not begin implementation until all dependency waves are in `Merged`
+- A dependency is satisfied only when its wave card is under `## Done`
+- Do not begin implementation until all dependency waves are in `Done`
 - If a wave has no dependencies, do not run the watcher
 
 Invocation:
@@ -53,7 +49,7 @@ Invocation:
 python3 <skill-dir>/scripts/watch-wave-deps.py <board-path> <wave-file> [--interval 10]
 ```
 
-The script exits `0` only when all dependencies of the target wave are in `Merged`.
+The script exits `0` only when all dependencies of the target wave are in `Done`.
 It exits non-zero on malformed input or missing files.
 
 ## tmux session rules
@@ -73,27 +69,15 @@ For each wave, instruct the subagent to do all of the following:
 - Follow the `tdd` skill strictly
 - Treat the project as resolved from board frontmatter
 - Do not ask the user for the wave path
-- If the wave has dependencies, first run the deterministic watcher script and wait until dependencies are `Merged`
-- Do not begin work on the wave until dependencies are merged
-- When the wave reaches `Done`, use the `merge-waves` skill to merge the completed wave into its PRD's merge branch (resolved from the wave's `prd` frontmatter field)
-- Be proactive and complete the workflow end-to-end
-
-## Suggested launch flow
-
-1. Resolve the skill directory and watcher script path
-2. Parse Ready waves from the board
-3. For each Ready wave:
-   - resolve its wave file path
-   - read the wave file and inspect `depends_on`
-   - build the prompt
-   - start a tmux session in the repo path from board frontmatter
-4. Report created session names
+- If the wave has dependencies, first run the deterministic watcher script and wait until dependencies are `Done`
+- Do not begin work on the wave until dependencies are satisfied
+- Be proactive and complete the workflow end-to-end (implementation → PR draft → CI babysitting)
 
 ## Output
 
 Summarize:
 - project name
 - repo path
-- Ready waves dispatched (with their associated PRD and merge branch)
+- Ready waves dispatched (with their associated PRD and branch name)
 - tmux session names created
 - any waves skipped and why

@@ -22,8 +22,11 @@ issue-tracker/<project-name>/
 - `Ready`
 - `In Progress`
 - `Blocked`
+- `PR Drafted` (wave-only)
+- `Pending Review` (wave-only)
 - `Done`
-- `Merged`
+
+PRD cards should not appear in `PR Drafted` or `Pending Review`.
 
 ## Card format
 
@@ -62,6 +65,8 @@ project: <project-name>
 title: <title>
 status: <status>
 prd: "[[prds/PRD_00001_descriptive-title]]"
+branch_name: <semantic-branch-name>
+pr_url:
 depends_on:
   - "[[waves/WAVE_00001_PRD_00001_prerequisite-slug]]"
 created: <ISO-8601>
@@ -87,7 +92,6 @@ type: prd
 project: <project-name>
 title: <title>
 status: <status>
-merge-branch: <branch-name>
 created: <ISO-8601>
 tags:
   - PRD

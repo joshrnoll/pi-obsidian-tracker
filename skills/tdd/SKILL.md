@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Implement a wave of work with TDD from a project's Obsidian Kanban board. Use when the user wants to execute a Ready wave with red-green-refactor while updating board state from Ready to In Progress to Done.
+description: Implement a wave of work with TDD from a project's Obsidian Kanban board. Use when the user wants to execute a Ready wave with red-green-refactor while updating board state from Ready to In Progress to PR Drafted (or Blocked).
 ---
 
 # TDD Obsidian
@@ -19,11 +19,13 @@ Read:
 
 Load `issue-tracker/<project>/board.md` and extract `repo` from frontmatter.
 
-Load the wave file and extract the `prd` frontmatter field. Load the linked PRD file and extract `merge-branch` — recorded for reference; `tdd` does not merge, but the worktree branch should be created from the PRD's `merge-branch`.
+Load the wave file and extract:
+- `branch_name` — the semantic branch to work on
+- `prd` — the linked PRD (for traceability only; no merge-branch is needed)
 
 If `repo` is absent from board frontmatter, stop and direct the user to run `new-project` or fix the board manually.
 
-If the wave is missing a `prd` field, or the linked PRD is missing `merge-branch`, stop and report the malformed file — do not proceed.
+If the wave is missing `branch_name`, stop and report the malformed file — do not proceed.
 
 ## Project resolution
 
@@ -50,9 +52,10 @@ When starting valid work:
 5. Create or reuse a single worktree for the entire wave:
 
 > [!NOTE]
-> All work in a wave is done on a **shared wave worktree** named after the wave ID. Example:
-> Work for wave `WAVE_00001_PRD_00001_auth-foundation.md` is done on `<repo>/.worktrees/WAVE_00001_PRD_00001_auth-foundation`
+> All work in a wave is done on a **shared wave worktree** using the wave's `branch_name`. Example:
+> Work for wave `WAVE_00001_PRD_00001_auth-foundation.md` with `branch_name: feat/auth-foundation` is done on `<repo>/.worktrees/feat/auth-foundation`
 > where `<repo>` is read from board frontmatter, not inferred from the project name.
+> The worktree branch is created from `main`.
 > Do not create separate worktrees per issue within the wave.
 
 6. Work through issues in dependency order using red-green-refactor for each issue
@@ -62,10 +65,42 @@ When starting valid work:
 
 When all issues in the wave are done:
 
-- Ensure all work is committed using semantic commits; commits should logically group work together for a clean history
-- Move the wave card from `In Progress` to `Done`
-- Update the wave note `status` frontmatter to `Done`
-- Summarize tests written and behavior implemented across all issues in the wave
+1. Ensure all work is committed using semantic commits; commits should logically group work together for a clean history
+2. Rebase onto latest `main` before pushing
+3. Push the branch to the remote
+4. Create a draft PR via `gh pr create --draft`:
+   - **Title**: human-first, reviewer-friendly — do not lead with wave IDs
+   - **Body** format:
+     ```
+     ## Summary
+     <brief summary of the wave's purpose>
+
+     ## What changed
+     <list of meaningful changes>
+
+     ## How to review
+     <suggested review strategy>
+
+     ## Tracker metadata
+     - Wave: `<wave filename>`
+     - PRD: `<PRD filename>`
+     ```
+5. Write `pr_url` back to the wave note frontmatter
+6. Move the wave card from `In Progress` to `PR Drafted`
+7. Update the wave note `status` frontmatter to `pr-drafted`
+
+### Babysit CI
+
+After drafting the PR, attempt to babysit CI using the `babysit-ci` skill:
+
+- If the `babysit-ci` skill is available **and** the repo has CI configured (GitHub Actions workflows exist): run `babysit-ci`
+- If the `babysit-ci` skill is unavailable or the repo has no CI: skip this step entirely
+
+**On terminal CI failure** (babysit-ci exhausts retries or encounters an unfixable failure):
+- Move the wave card from `PR Drafted` to `Blocked`
+- Update the wave note `status` frontmatter to `blocked`
+
+**On CI success**: no board state change — wave stays at `PR Drafted`.
 
 ## If blocked
 
@@ -73,7 +108,7 @@ If progress halts on an issue due to an external dependency or unresolved decisi
 
 - Ensure all work is committed
 - Move the wave card from `In Progress` to `Blocked`
-- Update the wave note `status` frontmatter to `Blocked`
+- Update the wave note `status` frontmatter to `blocked`
 - Note which specific issue is the blocker and why
 - The entire wave is stalled — do not continue to other issues in the wave
 
@@ -85,6 +120,8 @@ If progress halts on an issue due to an external dependency or unresolved decisi
 - Use one shared worktree per wave — never create per-issue worktrees
 - Keep implementation of each issue anchored to its acceptance criteria
 - Issue `depends_on` is intra-wave only — do not cross wave boundaries
+- PR titles must be human-first — no leading wave IDs
+- Always rebase onto `main` before pushing
 
 ## Output
 
@@ -94,4 +131,6 @@ Summarize:
 - wave chosen
 - board transitions performed
 - issues completed (in order) and tests added/updated per issue
-- final state (`Done` or `Blocked`; if `Blocked`, name the blocking issue)
+- PR URL (if drafted)
+- CI status (if babysit-ci ran)
+- final state (`PR Drafted` or `Blocked`; if `Blocked`, name the reason)

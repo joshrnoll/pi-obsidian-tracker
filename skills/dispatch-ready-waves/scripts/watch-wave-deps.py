@@ -13,20 +13,20 @@ QUOTED_LINK_RE = re.compile(r'^\s*-\s*"\[\[waves/([^\]]+)\]\]"\s*$')
 UNQUOTED_LINK_RE = re.compile(r'^\s*-\s*\[\[waves/([^\]]+)\]\]\s*$')
 
 
-def parse_board_merged(board_path: pathlib.Path) -> Set[str]:
-    merged: Set[str] = set()
+def parse_board_done(board_path: pathlib.Path) -> Set[str]:
+    done: Set[str] = set()
     current = None
     for raw_line in board_path.read_text().splitlines():
         header = HEADER_RE.match(raw_line)
         if header:
             current = header.group(1)
             continue
-        if current != 'Merged':
+        if current != 'Done':
             continue
         match = WAVE_LINK_RE.search(raw_line)
         if match:
-            merged.add(normalize_wave_stem(match.group(1)))
-    return merged
+            done.add(normalize_wave_stem(match.group(1)))
+    return done
 
 
 def normalize_wave_stem(link_target: str) -> str:
@@ -68,7 +68,7 @@ def parse_wave_dependencies(wave_path: pathlib.Path) -> List[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description='Wait until a wave\'s dependencies are in the Merged column of an Obsidian board.')
+    parser = argparse.ArgumentParser(description='Wait until a wave\'s dependencies are in the Done column of an Obsidian board.')
     parser.add_argument('board_path')
     parser.add_argument('wave_path')
     parser.add_argument('--interval', type=float, default=10.0)
@@ -94,13 +94,13 @@ def main() -> int:
         print(f'{wave_stem}: no dependencies')
         return 0
 
-    print(f'{wave_stem}: waiting for dependencies to reach Merged: {", ".join(deps)}', flush=True)
+    print(f'{wave_stem}: waiting for dependencies to reach Done: {", ".join(deps)}', flush=True)
 
     while True:
-        merged = parse_board_merged(board_path)
-        missing = [dep for dep in deps if dep not in merged]
+        done = parse_board_done(board_path)
+        missing = [dep for dep in deps if dep not in done]
         if not missing:
-            print(f'{wave_stem}: all dependencies merged', flush=True)
+            print(f'{wave_stem}: all dependencies done', flush=True)
             return 0
         print(f'{wave_stem}: still waiting on: {", ".join(missing)}', flush=True)
         time.sleep(args.interval)

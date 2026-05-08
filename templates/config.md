@@ -12,10 +12,11 @@
   - Ready
   - In Progress
   - Blocked
+  - PR Drafted (wave-only)
+  - Pending Review (wave-only)
   - Done
-  - Merged
 - Board state is canonical for both wave and PRD state
 - `tdd` may only start from `Ready`
 - Per-project repo path is defined in `board.md` frontmatter (`repo` field)
-- Per-PRD merge branch is defined in the PRD file frontmatter (`merge-branch` field)
-- Skills must never assume `main` as the merge branch — always read from the PRD file
+- Wave `branch_name` is defined in wave frontmatter — it is the semantic branch for that wave
+- Wave `pr_url` is written by `tdd` after draft PR creation

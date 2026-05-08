@@ -74,6 +74,8 @@ Scan existing files in the project's `issues/` and `waves/` directories to deter
 - Write wave files to `issue-tracker/<project-name>/waves/`
 - Use the naming convention: `WAVE_<nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>.md`
 - Set `prd` frontmatter field to the parent PRD wikilink: `"[[prds/PRD_<prd-nnnnn>_<title>]]"`
+- Set `branch_name` to a semantic, reviewer-friendly branch name (e.g. `feat/healthcheck-api-endpoint`, `fix/session-timeout-handling`). Do not use wave IDs or tracker IDs as branch names.
+- Leave `pr_url` empty — it is written later by `tdd`
 - Populate wave `depends_on` with wikilinks to prerequisite waves
 - Set `tags` to `wave`, the kebab-case project tag, and the kebab-case parent PRD tag
 - List all issues in the wave under `## Issues` as wikilinks

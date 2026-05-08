@@ -4,7 +4,6 @@ project: { { project-name } }
 title: { { title } }
 status: needs-triage
 board: "[[board]]"
-merge-branch: { { merge-branch } }
 created: { { created } }
 tags:
   - PRD

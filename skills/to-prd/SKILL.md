@@ -21,12 +21,6 @@ Ask for the project name if it is not explicit.
 
 If the project directory does not exist under `issue-tracker/`, **stop and direct the user to run the `new-project` skill first**. Do not lazily scaffold projects — `new-project` is required to capture repo config.
 
-## Collect PRD details
-
-Ask for the following if not already provided:
-
-1. **Merge branch** — the feature branch waves associated with this PRD will be merged into, e.g. `feat-auth` or `main`. This is stored in the PRD frontmatter and is used by `merge-waves` and `merge-prd`.
-
 ## PRD numbering
 
 Scan existing files in `issue-tracker/<project>/prds/` to determine the next PRD number. Numbers are 5-digit zero-padded and flat per-project (e.g. `PRD_00001`, `PRD_00002`).
@@ -45,7 +39,6 @@ The PRD should:
 - include a clear problem statement and solution
 - include a long, numbered list of user stories
 - record implementation and testing decisions
-- set `merge-branch` in frontmatter to the branch provided
 - set `status` to `needs-triage` in frontmatter
 - set `tags` so the project tag is kebab-case and the artifact tag is exactly `PRD`
 
@@ -70,5 +63,4 @@ Insert the PRD card into `## Needs Triage` in `board.md`:
 Summarize:
 - project name
 - PRD file path
-- merge branch recorded
 - board card inserted
