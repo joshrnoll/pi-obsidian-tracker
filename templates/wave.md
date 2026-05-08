@@ -1,15 +1,17 @@
 ---
 type: wave
-project: {{project-name}}
-title: {{title}}
-status: {{status}}
+project: { { project-name } }
+title: { { title } }
+status: { { status } }
 prd: "[[prds/{{prd-file}}]]"
+board: "[[board]]"
 depends_on:
   - "[[waves/{{prerequisite-wave}}]]"
-created: {{created}}
+created: { { created } }
 tags:
-  - issue-tracker
-  - {{project-name}}
+  - wave
+  - {{project-tag}}
+  - {{prd-tag}}
 ---
 
 # {{title}}

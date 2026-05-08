@@ -47,6 +47,7 @@ The PRD should:
 - record implementation and testing decisions
 - set `merge-branch` in frontmatter to the branch provided
 - set `status` to `needs-triage` in frontmatter
+- set `tags` so the project tag is kebab-case and the artifact tag is exactly `PRD`
 
 ## Add to board
 
@@ -60,6 +61,7 @@ Insert the PRD card into `## Needs Triage` in `board.md`:
 
 - Do not interview the user unless key information is missing
 - Prefer a stable, human-readable title and filename
+- Always write tags in the required format; derived tags must be kebab-case
 - Link to related issue notes only if they already exist
 - Do not include file paths or code snippets in the PRD
 

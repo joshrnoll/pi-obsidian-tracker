@@ -52,6 +52,13 @@ Wave state is determined by the aggregate state of its constituent issues and ex
 
 PRD → wave association is discovered by scanning all wave files for a matching `prd` field. PRD files do not maintain a reverse list of waves.
 
+## Tag model
+
+- All project-derived and parent-derived tags must be kebab-case
+- PRD files must carry `PRD` plus the project tag
+- Wave files must carry `wave`, the project tag, and a kebab-case tag for the parent PRD
+- Issue files must carry `issue`, the project tag, and kebab-case tags for the parent wave and parent PRD
+
 ## Responsibility split
 
 - `to-prd` creates PRD notes and inserts PRD cards into `Needs Triage`

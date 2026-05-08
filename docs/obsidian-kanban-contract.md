@@ -66,8 +66,9 @@ depends_on:
   - "[[waves/WAVE_00001_PRD_00001_prerequisite-slug]]"
 created: <ISO-8601>
 tags:
-  - issue-tracker
-  - <project-name>
+  - wave
+  - <project-name-in-kebab-case>
+  - <parent-prd-tag-in-kebab-case>
 ---
 
 # <title>
@@ -89,10 +90,40 @@ status: <status>
 merge-branch: <branch-name>
 created: <ISO-8601>
 tags:
-  - prd
-  - <project-name>
+  - PRD
+  - <project-name-in-kebab-case>
 ---
 ```
+
+## Issue file format
+
+```markdown
+---
+type: issue
+project: <project-name>
+title: <title>
+status: <status>
+prd: "[[prds/PRD_00001_descriptive-title]]"
+wave: "[[waves/WAVE_00001_PRD_00001_descriptive-slug]]"
+board: "[[board]]"
+created: <ISO-8601>
+depends_on: []
+tags:
+  - issue
+  - <project-name-in-kebab-case>
+  - <parent-wave-tag-in-kebab-case>
+  - <parent-prd-tag-in-kebab-case>
+---
+```
+
+## Tag rules
+
+- Tags must always be kebab-case, except the literal PRD tag, which must be exactly `PRD`
+- Every artifact must include the project tag in kebab-case
+- PRD files must include `PRD`
+- Wave files must include `wave` and the parent PRD tag in kebab-case
+- Issue files must include `issue`, the parent wave tag in kebab-case, and the parent PRD tag in kebab-case
+- Do not use spaced, underscored, or mixed-case derived tags
 
 ## Board frontmatter
 

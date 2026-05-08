@@ -67,13 +67,15 @@ Scan existing files in the project's `issues/` and `waves/` directories to deter
 - Set `wave` frontmatter field to the containing wave wikilink: `"[[waves/WAVE_<wave-nnnnn>_PRD_<prd-nnnnn>_<slug>]]"`
 - Set `board` frontmatter field to `"[[board]]"`
 - Populate `depends_on` in frontmatter with intra-wave issue wikilinks only
-- Link issues back to the PRD under `## Links`
+- Set `tags` using kebab-case derived tags only: `issue`, the kebab-case project tag, the kebab-case parent wave tag, and the kebab-case parent PRD tag
+- Do not add a `## Links` section; PRD/wave/board associations live in frontmatter
 
 ### Wave files
 - Write wave files to `issue-tracker/<project-name>/waves/`
 - Use the naming convention: `WAVE_<nnnnn>_PRD_<prd-nnnnn>_<descriptive-slug>.md`
 - Set `prd` frontmatter field to the parent PRD wikilink: `"[[prds/PRD_<prd-nnnnn>_<title>]]"`
 - Populate wave `depends_on` with wikilinks to prerequisite waves
+- Set `tags` to `wave`, the kebab-case project tag, and the kebab-case parent PRD tag
 - List all issues in the wave under `## Issues` as wikilinks
 
 ### Board
@@ -90,6 +92,7 @@ Scan existing files in the project's `issues/` and `waves/` directories to deter
 - Preserve existing board formatting
 - Do not add another PRD card to the board — `to-prd` already inserted it
 - Issue cards must not appear on the board — only wave cards and PRD cards
+- Always normalize derived tags to kebab-case
 
 ## Output
 

@@ -58,6 +58,7 @@ This package implements a small Obsidian-vault workflow for planning, triage, an
 - `merge-branch` is stored in PRD frontmatter; it is the canonical source for the feature branch
 - Skills must never assume `main` as the merge branch — always read from the PRD file
 - PRD → wave association is discovered by scanning wave `prd` fields (not a reverse list on the PRD)
+- Tags must be written consistently: project-derived tags are kebab-case; waves and issues carry parent artifact tags in kebab-case; PRDs carry the literal `PRD` tag
 
 ## Naming conventions
 

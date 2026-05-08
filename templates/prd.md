@@ -1,13 +1,14 @@
 ---
 type: prd
-project: {{project-name}}
-title: {{title}}
+project: { { project-name } }
+title: { { title } }
 status: needs-triage
-merge-branch: {{merge-branch}}
-created: {{created}}
+board: "[[board]]"
+merge-branch: { { merge-branch } }
+created: { { created } }
 tags:
-  - prd
-  - {{project-name}}
+  - PRD
+  - {{project-tag}}
 ---
 
 # PRD: {{title}}
@@ -33,6 +34,7 @@ Include primary flows, edge cases, operational concerns, and any meaningful user
 List the implementation decisions already made.
 
 Include things like:
+
 - modules or subsystems that will be built or modified
 - interface boundaries that matter
 - architectural decisions
@@ -48,6 +50,7 @@ Do not include file paths or code snippets.
 Describe the testing strategy.
 
 Include:
+
 - what makes a good test for this work
 - which modules or behaviors should be tested
 - any relevant prior art or existing testing patterns in the codebase
